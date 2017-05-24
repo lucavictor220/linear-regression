@@ -22,11 +22,22 @@ partitions <- createMultiFolds(y=data[, 1], k=nrOfFolds, 1)
 
 
 # create a vector with all the indexes of the training data by taking data from the fold1 of partitions variable
-trainingData1 <- partitions$Fold1.Rep1;
+trainingData_1_Indexes <- partitions$Fold1.Rep1;
 
 # create a vector with all indexes of data
 indexesOfInitialData <- c(1:length(data[, 1]))
 
 # find indexes of test data for the first data frame taken from createMultiFolds()
-testData1 <- indexesOfInitialData[is.na(pmatch(indexesOfInitialData, trainingData1))]
+testData_1_Indexes <- indexesOfInitialData[is.na(pmatch(indexesOfInitialData, trainingData_1_Indexes))]
+
+# Extract train data from the indexes 
+trainingData_1 <- data[trainingData_1_Indexes, ];
+
+# Extract test data from the indexes
+testData_1 <- data[testData_1_Indexes, ];
+
+# Check for length of columns to prove everything is working properly
+length(trainingData_1[, 1])
+length(testData_1[, 1])
+
 
