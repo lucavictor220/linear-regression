@@ -52,7 +52,17 @@ linearModelFormula <- as.formula(paste("strength ~", paste(factors, collapse="+"
 # Create linear model from the formula and data given as data.frame
 linearModel <- lm(linearModelFormula, trainingData_1);
 
+# print linear model
 linearModel
+
+# Predict data based on the build linear model
+predictionVector <- predict(linearModel, testData_1);
+# print vector of predicted strengths
+predictionVector
+
+# calculate the mean value for build model
+meanValue <- mean(abs(predictionVector - testData_1$strength));
+
 
 # Check for length of columns to prove everything is working properly
 length(trainingData_1[, 1])
