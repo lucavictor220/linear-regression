@@ -22,19 +22,10 @@ partitions <- createMultiFolds(y=data[, 1], k=nrOfFolds, 1)
 
 
 # create a vector with all the indexes of the training data by taking data from the fold1 of partitions variable
-trainingData_1_Indexes <- partitions$Fold1.Rep1;
+fold <- partitions$Fold1.Rep1;
 
 # create a vector with all indexes of data
 indexesOfInitialData <- c(1:length(data[, 1]))
-
-# find indexes of test data for the first data frame taken from createMultiFolds()
-testData_1_Indexes <- indexesOfInitialData[is.na(pmatch(indexesOfInitialData, trainingData_1_Indexes))]
-
-# Extract train data from the indexes 
-trainingData_1 <- data[trainingData_1_Indexes, ];
-
-# Extract test data from the indexes
-testData_1 <- data[testData_1_Indexes, ];
 
 # Find variables needed for creating linear model
 factors <- c(names(data));
@@ -45,27 +36,47 @@ attributeToWorkWith <- "strength";
 # Remove strength column... To avoid worning with lm() 
 factors <- factors[factors != attributeToWorkWith];
 
+# Iterate through all the folds created by createMultiFolds() function and perform:
+#   1. find indexes of test set
+#   2. extract data from specified indexes for train and test sets
+#   3. create model
+#   4. predict strength
+#   5. calculate mean
+for (fold in partitions) {
+  
+  # find indexes of test data for the first data frame taken from createMultiFolds()
+  testDataIndexes <- indexesOfInitialData[is.na(pmatch(indexesOfInitialData, fold))]
+  
+  # Extract train data from the indexes 
+  trainData <- data[fold, ];
+  
+  # Extract test data from the indexes
+  testData <- data[testDataIndexes, ];
+  
+  # Check for length of columns to prove everything is working properly
+  #length(trainData[, 1])
+  #length(testData[, 1])
+  
+  # Generate formula from the given factors
+  linearModelFormula <- as.formula(paste("strength ~", paste(factors, collapse="+")));
+  
+  # Create linear model from the formula and data given as data.frame
+  linearModel <- lm(linearModelFormula, trainData);
+  
+  # print linear model
+  #linearModel
+  
+  # Predict data based on the build linear model
+  predictedStrength <- predict(linearModel, testData);
+  # print vector of predicted strengths
+  #predictedStrength
+  
+  # calculate the mean value for build model
+  meanValue <- mean(abs(predictedStrength - testData$strength));
+  
+  print(meanValue)
+}
 
-# Generate formula from the given factors
-linearModelFormula <- as.formula(paste("strength ~", paste(factors, collapse="+")));
 
-# Create linear model from the formula and data given as data.frame
-linearModel <- lm(linearModelFormula, trainingData_1);
-
-# print linear model
-linearModel
-
-# Predict data based on the build linear model
-predictionVector <- predict(linearModel, testData_1);
-# print vector of predicted strengths
-predictionVector
-
-# calculate the mean value for build model
-meanValue <- mean(abs(predictionVector - testData_1$strength));
-
-
-# Check for length of columns to prove everything is working properly
-length(trainingData_1[, 1])
-length(testData_1[, 1])
 
 
