@@ -9,7 +9,7 @@ nrOfFolds <- 5
 data <- read.csv(file="hormigon.csv", header=TRUE, sep=",")
 
 # create k-forlds cross-validation. createMultiFolds() returns folds with vector with indexes of traing data
-partitions <- createMultiFolds(y=data[, 1], k=nrOfFolds, 1)
+partitions <- createMultiFolds(y=data[, 9], k=nrOfFolds, 1)
 
 
 # Start ====== Uncomment to use another function which create training data ================= 
